@@ -5,7 +5,7 @@ from psycopg2.extras import execute_values
 df = pd.read_csv('data/alameda-address.csv')
 df = df[['APN_1', 'ADDRESS', 'ZIPCODE', 'AddressTyp', 'CITY']]
 
-conn = psycopg2.connect("dbname=covid19 user=covid19\
+conn = psycopg2.connect("dbname=covid19 user=covid19 port=5434\
                          password=covid19databasepassword host=localhost")
 
 

@@ -10,7 +10,7 @@ columns = [col['name'] for col in doc['meta']['view']['columns']]
 
 data = map(lambda x: dict(zip(columns, x)), doc['data'])
 
-conn = psycopg2.connect("dbname=covid19 user=covid19\
+conn = psycopg2.connect("dbname=covid19 user=covid19 port=5434\
                          password=covid19databasepassword host=localhost")
 
 def bbox_to_poly(poly):
