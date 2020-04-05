@@ -235,7 +235,7 @@ To download:
 
 # Dev Setup
 
-Dockerfile located in `docker/`; creates a single Postgresql-11 server with postgis, timescaledb and plpython3u extensions.
+Dockerfile located in `docker/`; creates a single Postgresql-11 server with postgis, timescaledb and plpython3u extensions. **Note: exposed on port `5434` (non-standard) to avoid conflicting with existing postgresql installations**
 
 Requires:
 - docker
