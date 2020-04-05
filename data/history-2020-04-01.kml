@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+  <Document>
+    <name> Location history from 2020-04-01 to 2020-04-01 </name>
+    <open>1</open>
+    <description/>
+    <StyleMap id="multiTrack">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#multiTrack_n</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#multiTrack_h</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Style id="multiTrack_n">
+      <IconStyle>
+        <Icon>
+          <href>https://earth.google.com/images/kml-icons/track-directional/track-0.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <color>99ffac59</color>
+        <width>6</width>
+      </LineStyle>
+    </Style>
+    <Style id="multiTrack_h">
+      <IconStyle>
+        <scale>1.2</scale>
+        <Icon>
+          <href>https://earth.google.com/images/kml-icons/track-directional/track-0.png</href>
+        </Icon>
+      </IconStyle>
+      <LineStyle>
+        <color>99ffac59</color>
+        <width>8</width>
+      </LineStyle>
+    </Style>
+    <Placemark>
+      <name>Nomad Cafe</name>
+      <address>6500 Shattuck Ave, Berkeley, CA 94705</address>
+      <ExtendedData>
+        <Data name="Email">
+          <value>anonymized</value>
+        </Data>
+        <Data name="Category">
+          <value>Cafe</value>
+        </Data>
+        <Data name="Distance">
+          <value>0</value>
+        </Data>
+      </ExtendedData>
+      <description> Cafe from 2020-04-01T07:00:00.000Z to 2020-04-01T17:00:00.000Z. Distance 0m </description>
+      <Point>
+        <coordinates>-122.2656767,37.8505031,0</coordinates>
+      </Point>
+      <TimeSpan>
+        <begin>2020-04-01T07:00:00.000Z</begin>
+        <end>2020-04-01T17:00:00.000Z</end>
+      </TimeSpan>
+    </Placemark>
+    <Placemark>
+      <name>Moving</name>
+      <address/>
+      <ExtendedData>
+        <Data name="Email">
+          <value>anonymized</value>
+        </Data>
+        <Data name="Category">
+          <value>Moving</value>
+        </Data>
+        <Data name="Distance">
+          <value>741</value>
+        </Data>
+      </ExtendedData>
+      <description> Moving from 2020-04-01T17:00:00.000Z to 2020-04-01T17:13:00.000Z. Distance 741m </description>
+      <LineString>
+        <altitudeMode>clampToGround</altitudeMode>
+        <extrude>1</extrude>
+        <tesselate>1</tesselate>
+        <coordinates>-122.26567670000001,37.8505031,0 -122.26567670000001,37.8505031,0 -122.267212,37.857061,0 -122.267212,37.857061,0 </coordinates>
+      </LineString>
+      <TimeSpan>
+        <begin>2020-04-01T17:00:00.000Z</begin>
+        <end>2020-04-01T17:13:00.000Z</end>
+      </TimeSpan>
+    </Placemark>
+    <Placemark>
+      <name>Berkeley Bowl</name>
+      <address>2020 Oregon St, Berkeley, CA 94703</address>
+      <ExtendedData>
+        <Data name="Email">
+          <value>anonymized</value>
+        </Data>
+        <Data name="Category">
+          <value>Supermarket</value>
+        </Data>
+        <Data name="Distance">
+          <value>0</value>
+        </Data>
+      </ExtendedData>
+      <description> Supermarket from 2020-04-01T17:13:00.000Z to 2020-04-01T18:01:00.000Z. Distance 0m </description>
+      <Point>
+        <coordinates>-122.267212,37.857061,0</coordinates>
+      </Point>
+      <TimeSpan>
+        <begin>2020-04-01T17:13:00.000Z</begin>
+        <end>2020-04-01T18:01:00.000Z</end>
+      </TimeSpan>
+    </Placemark>
+    <Placemark>
+      <name>San Pablo Park</name>
+      <address>2800 Park St, Berkeley, CA 94702</address>
+      <ExtendedData>
+        <Data name="Email">
+          <value>anonymized</value>
+        </Data>
+        <Data name="Category">
+          <value>Park</value>
+        </Data>
+        <Data name="Distance">
+          <value>0</value>
+        </Data>
+      </ExtendedData>
+      <description> Park from 2020-04-01T18:01:00.000Z to 2020-04-01T22:00:00.000Z. Distance 0m </description>
+      <Point>
+        <coordinates>-122.2839904,37.8559146,0</coordinates>
+      </Point>
+      <TimeSpan>
+        <begin>2020-04-01T18:01:00.000Z</begin>
+        <end>2020-04-01T22:00:00.000Z</end>
+      </TimeSpan>
+    </Placemark>
+    <Placemark>
+      <name>Nomad Cafe</name>
+      <address>6500 Shattuck Ave, Berkeley, CA 94705</address>
+      <ExtendedData>
+        <Data name="Email">
+          <value>anonymized</value>
+        </Data>
+        <Data name="Category">
+          <value>Cafe</value>
+        </Data>
+        <Data name="Distance">
+          <value>0</value>
+        </Data>
+      </ExtendedData>
+      <description> Cafe from 2020-04-01T22:00:00.000Z to 2020-04-02T07:00:00.000Z. Distance 0m </description>
+      <Point>
+        <coordinates>-122.2656767,37.8505031,0</coordinates>
+      </Point>
+      <TimeSpan>
+        <begin>2020-04-01T22:00:00.000Z</begin>
+        <end>2020-04-02T07:00:00.000Z</end>
+      </TimeSpan>
+    </Placemark>
+  </Document>
+</kml>

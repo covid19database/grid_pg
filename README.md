@@ -219,6 +219,18 @@ Following scrips have been written:
 - `load-alameda-geo.py`: loads in Alameda county shape files
 - `load_alameda_address.py`: loads in Alameda county address records (ties APNs to street addresses)
 
+## Data Formats
+
+### Google Timeline KML Export
+
+**Sample file**: `data/history-2020-04-01.kml`
+
+To download:
+1. Navigate to [maps.google.com](http://maps.google.com/)
+2. Use the menu to navigate to "Your timeline"
+3. Pick the day you want, add places or export your location history (if you do not have location history enabled, you should be able to add a sequence of places)
+4. Use the "gear icon" in the lower right corner and select the option "Export this day to KML"
+
 # Setup/Install
 
 - relies on Postgresql 11 (as of now)
