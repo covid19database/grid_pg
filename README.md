@@ -232,7 +232,6 @@ To download:
 4. Use the "gear icon" in the lower right corner and select the option "Export this day to KML"
 
 
-
 # Dev Setup
 
 Dockerfile located in `docker/`; creates a single Postgresql-11 server with postgis, timescaledb and plpython3u extensions. **Note: exposed on port `5434` (non-standard) to avoid conflicting with existing postgresql installations**
@@ -248,6 +247,9 @@ To run the server:
 Load in the parcel data:
 - `make install-python-dependencies`
 - `make load-data`
+
+Load in sample location history data:
+- `python scripts/load_kml.py 1 data/history-2020-04-01.kml`
 
 ### Setup/Install (non-docker)
 

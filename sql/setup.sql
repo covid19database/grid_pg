@@ -70,7 +70,7 @@ CREATE INDEX IF NOT EXISTS fact_domain_idx ON facts(domain);
 CREATE OR REPLACE FUNCTION plus_code(poly TEXT) RETURNS TEXT AS $$
 import sys
 import re
-sys.path.append('/home/gabe/src/covid/pg/.env/lib/python3.7/site-packages')
+sys.path.append('/var/lib/postgresql/.local/lib/python3.7/site-packages')
 from openlocationcode import openlocationcode as olc
 x, y = re.findall(r'(-?[0-9]+.?[0-9]*)',poly)
 x = float(x)

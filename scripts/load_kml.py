@@ -13,7 +13,7 @@ if len(sys.argv) < 3:
 userid, location_file = sys.argv[1], sys.argv[2]
 print(f"Loading {location_file} data for userid {userid}")
 
-conn = psycopg2.connect("dbname=covid19 user=covid19\
+conn = psycopg2.connect("dbname=covid19 user=covid19 port=5434\
                          password=covid19databasepassword host=localhost")
 k = fk.KML()
 k.from_string(open(location_file).read())

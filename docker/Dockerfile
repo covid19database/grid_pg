@@ -15,7 +15,11 @@ RUN apt-get update && apt-get install -y \
    postgresql-11 \
    timescaledb-postgresql-11 \
    postgresql-11-postgis-3 \
-   postgresql-plpython3-11
+   postgresql-plpython3-11 \
+   python3-dev \
+   python3-pip
+
+RUN python3 -m pip install openlocationcode
 
 RUN timescaledb-tune --quiet --yes
 RUN echo "host all  all    0.0.0.0/0  password" >> /etc/postgresql/11/main/pg_hba.conf
