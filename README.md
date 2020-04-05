@@ -209,7 +209,7 @@ parcel # (APN)  <---->  geographic bounding box <---> user geographic coordinate
 street address
 ```
 
-I can document this later if we need
+I can document this later if we need; data files available for download [here](http://files.gtf.fyi/alameda-county-parcel-address.tar.gz) (via Alameda county data hub)
 
 ## Data Ingestion
 
@@ -230,6 +230,7 @@ To download:
 2. Use the menu to navigate to "Your timeline"
 3. Pick the day you want, add places or export your location history (if you do not have location history enabled, you should be able to add a sequence of places)
 4. Use the "gear icon" in the lower right corner and select the option "Export this day to KML"
+
 
 # Setup/Install
 
