@@ -243,6 +243,7 @@ Requires:
 
 To run the server:
 - `make run`
+- runs in the foreground and deletes the database on exit
 
 Load in the parcel data:
 - `make install-python-dependencies`
