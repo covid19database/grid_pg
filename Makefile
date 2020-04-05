@@ -1,4 +1,4 @@
-.PHONY: build-container
+.PHONY: build-container load-data install-python-dependencies run
 
 build-container: docker/Dockerfile sql/setup.sql
 	docker build -f docker/Dockerfile -t covid19griddb sql
