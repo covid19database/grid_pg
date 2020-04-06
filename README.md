@@ -221,6 +221,7 @@ I can document this later if we need; data files available for download [here](h
 - simple grid queries: count of people (sick, or total) in a placetime
     - example: **`api/query.py`**
 
+**TODO: dockerize the API server**
 
 ### Bulk Data Load
 
@@ -251,7 +252,7 @@ Requires:
 - docker
 - python3
 
-To run the server:
+To run the postgresql server:
 - `make run`
 - runs in the foreground and deletes the database on exit
 
