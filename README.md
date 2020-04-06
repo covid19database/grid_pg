@@ -213,6 +213,17 @@ I can document this later if we need; data files available for download [here](h
 
 ## Data Ingestion
 
+### API
+
+`api/app.py` implements a simple Flask application that supports:
+- pushing data to the server: location tracing and sickness reporting
+    - example: **`api/post.py`**
+- simple grid queries: count of people (sick, or total) in a placetime
+    - example: **`api/query.py`**
+
+
+### Bulk Data Load
+
 Following scrips have been written:
 - `load_kml.py`: loads a KML export from Google timeline into the `location_history` table
 - `load_takeout.py`: loads a GeoJSON export from Google takeout into the `location_history` table
@@ -254,13 +265,13 @@ Load in sample location history data:
 ### Setup/Install (non-docker)
 
 - relies on Postgresql 11 (as of now)
-- PostGIS: 
+- PostGIS:
     - install: `sudo apt install postgresql-11-postgis-3`
     - SQL: `CREATE EXTENSION postgis;`
-- PLpython3: 
+- PLpython3:
     - install: `sudo apt install postgresql-plpython3-11`
     - SQL: `CREATE EXTENSION plpython3u;`
-- Timescaledb: 
+- Timescaledb:
     - install: look at website
     - SQL: `CREATE EXTENSION timescaledb CASCADE;`
 
