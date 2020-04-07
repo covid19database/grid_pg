@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  db:
+    build: "./sql"
+    ports:
+      - "5434:5432"
+  web:
+    build: "./api"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db

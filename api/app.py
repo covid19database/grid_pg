@@ -9,8 +9,8 @@ import psycopg2
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__, static_url_path='')
-conn = psycopg2.connect("dbname=covid19 user=covid19 port=5434\
-                         password=covid19databasepassword host=localhost")
+conn = psycopg2.connect("dbname=covid19 user=covid19 port=5432\
+                         password=covid19databasepassword host=db")
 
 
 add_data_schema = {

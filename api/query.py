@@ -11,5 +11,5 @@ example = {
     ],
 }
 
-r = requests.post('http://localhost:8080/grid', json=example)
+r = requests.post('http://localhost:5000/grid', json=example)
 print(r.json())

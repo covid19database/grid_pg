@@ -24,5 +24,5 @@ example = {
     ]
 }
 
-r = requests.post('http://localhost:8080/add', json=example)
+r = requests.post('http://localhost:5000/add', json=example)
 print(r.content)
