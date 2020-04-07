@@ -1,0 +1,38 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix covid: <http://www.example.com/covid19ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example#> .
+
+ex:p1    a   covid:Person ;
+    covid:hasTest ex:test1, ex:test2 .
+
+ex:p2    a   covid:Person ;
+    covid:hasTest ex:test3 .
+
+ex:test1    a   covid:Test ;
+    covid:hasTime   "2020-04-03T:15:14:13"^^xsd:dateTime ;
+    covid:testedPositive   "false"^^xsd:boolean .
+
+ex:test2    a   covid:Test ;
+    covid:hasTime   "2020-04-04T:18:00:01"^^xsd:dateTime ;
+    covid:testedPositive   "true"^^xsd:boolean .
+
+ex:test3    a   covid:Test ;
+    covid:hasTime   "2020-04-04T:12:30:00"^^xsd:dateTime ;
+    covid:testedPositive   "false"^^xsd:boolean .
+
+ex:l1   a   covid:Location ;
+    covid:hasShape  "POLYGON((-122.124256621385 37.7555715447801,-122.124256621385 37.7558705785292,-122.123827582453 37.7558705785292,-122.123827582453 37.7555715447801,-122.124256621385 37.7555715447801))" .
+
+ex:l2   a   covid:Location ;
+    covid:hasAPN  "57-2060-12" .
+
+ex:l3   a   covid:Location ;
+    covid:hasAPN  "1960 Adeline Street, Oakland, CA 94609" .
+
+ex:int1 a   covid:Interaction ;
+    covid:involved  ex:p1, ex:p2, ex:l3 ;
+    covid:happenedAt    "2020-04-05T00:00:00"^^xsd:dateTime .

@@ -1,0 +1,72 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix : <http://www.example.com/covid19ontology#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+<http://www.example.com/covid19ontology#> a owl:Ontology ;
+    rdfs:label "Covid 19 DB Ontology" .
+
+:Entity    a   owl:Class ;
+    skos:definition "Anything that is capable of transmitting a disease, most commonly people and places " .
+
+:Person    a   owl:Class ;
+    rdfs:subClassOf :Entity ;
+    owl:disjointWith :Location .
+
+:Location    a   owl:Class ;
+    rdfs:subClassOf :Entity ;
+    owl:disjointWith :Person .
+
+:Interaction    a   owl:Class ;
+    owl:disjointWith    :Entity, :Test .
+
+
+:Test  a   owl:Class .
+
+# Entity properties
+:id    a   owl:DatatypeProperty ;
+    rdfs:domain  :Entity ;
+    rdfs:range  xsd:string .
+
+:hasTest    a   owl:ObjectProperty ;
+    rdfs:domain  :Entity ;
+    rdfs:range  :Test .
+
+# Test properties
+:hasTime    a   owl:DatatypeProperty ;
+    rdfs:domain :Test ;
+    rdfs:range  xsd:dateTime .
+
+:testedPositive    a   owl:DatatypeProperty ;
+    rdfs:domain :Test ;
+    rdfs:range  xsd:boolean .
+
+# Location properties
+:hasShape    a   owl:DatatypeProperty ;
+    rdfs:domain :Location ;
+    rdfs:range  xsd:string .
+
+:hasAPN    a   owl:DatatypeProperty ;
+    rdfs:domain :Location ;
+    rdfs:range  xsd:string .
+
+:hasAddress    a   owl:DatatypeProperty ;
+    rdfs:domain :Location ;
+    rdfs:range  xsd:string .
+
+# Interaction properties
+:involved   a   owl:ObjectProperty ;
+    rdfs:domain :Interaction ;
+    rdfs:range  :Entity ;
+    owl:inverseOf :involvedIn .
+
+:involvedIn a owl:ObjectProperty ;
+    rdfs:domain :Entity ;
+    rdfs:range :Interaction .
+
+:happenedAt a owl:DatatypeProperty ;
+    rdfs:domain :Interaction ;
+    rdfs:range xsd:dateTime .
