@@ -2,7 +2,7 @@
 This file shows how to load/interact with the COVID-19 ontology
 """
 import rdflib
-import reasonable
+import owlrl
 
 
 class COVID19Graph:
@@ -19,19 +19,12 @@ class COVID19Graph:
         except Exception:
             return rdflib.Literal(s)
 
-    def _reason(self):
-        r = reasonable.PyReasoner()
-        r.from_graph(self.g)
-        for t in r.reason():
-            t = tuple(map(self._to_rdflib_ident, t))
-            self.g.add(t)
-
     def add_file(self, filename):
         """
         Load contents of file into graph
         """
         self.g.parse(filename, format='ttl')
-        self._reason()
+        owlrl.DeductiveClosure(owlrl.OWLRL_Semantics).expand(self.g)
 
     def query(self, query):
         return list(self.g.query(query))
