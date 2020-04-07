@@ -1,3 +1,37 @@
+# Getting Started
+
+Requires:
+- docker
+- docker-compose
+- python3
+
+1. To run the development setup (postgres backend defined in `sql/`, API backend defined in `api/`), use docker-compose:
+
+    ```
+    docker-compose up
+    ```
+
+    This should bring up the Postgresql server running on port 5434 and the API server running on port 5000.
+
+2. (optional) load in supporting parcel data for Alameda county (takes a few minutes)
+    - `make install-python-dependencies`
+    - `make load-data`
+
+3. (optional) test out the API:
+    ```
+    # if you haven't run already
+    make install-python-dependencies
+    # activate virtual env
+    . .env/bin/activate
+
+    # post trace data via the API
+    python api/post.py
+
+    # query the grid
+    python api/query.py
+    ```
+
+
 # Schema Overview
 
 Following notes on [this doc](https://docs.google.com/document/d/1AfhYHz5W0eV_eDM_5DSzx7uOJRod5VG8neBqYxNqo1w/edit#heading=h.gs1z8jfan3o9)
@@ -237,33 +271,18 @@ Following scrips have been written:
 
 **Sample file**: `data/history-2020-04-01.kml`
 
-To download:
+Load in sample location history data:
+- `python scripts/load_kml.py 1 data/history-2020-04-01.kml`
+
+To download for yourself:
 1. Navigate to [maps.google.com](http://maps.google.com/)
 2. Use the menu to navigate to "Your timeline"
 3. Pick the day you want, add places or export your location history (if you do not have location history enabled, you should be able to add a sequence of places)
 4. Use the "gear icon" in the lower right corner and select the option "Export this day to KML"
+5. Use the python script above to load it into the database. Choose a user id (`1`, above) that is unique (working on autoassigning these)
 
 
-# Dev Setup
-
-Dockerfile located in `docker/`; creates a single Postgresql-11 server with postgis, timescaledb and plpython3u extensions. **Note: exposed on port `5434` (non-standard) to avoid conflicting with existing postgresql installations**
-
-Requires:
-- docker
-- python3
-
-To run the postgresql server:
-- `make run`
-- runs in the foreground and deletes the database on exit
-
-Load in the parcel data:
-- `make install-python-dependencies`
-- `make load-data`
-
-Load in sample location history data:
-- `python scripts/load_kml.py 1 data/history-2020-04-01.kml`
-
-### Setup/Install (non-docker)
+# Setup/Install (non-docker)
 
 - relies on Postgresql 11 (as of now)
 - PostGIS:

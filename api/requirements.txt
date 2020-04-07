@@ -1,0 +1,7 @@
+psycopg2-binary
+fastkml
+geopandas
+openlocationcode
+shapely
+jsonschema
+Flask
