@@ -1,5 +1,7 @@
 # Data Model / Ontology
 
+![](ontology_viz.png)
+
 Prototype of ontology for interaction-based model
 
 - `ontology.ttl`: formal OWL definition
