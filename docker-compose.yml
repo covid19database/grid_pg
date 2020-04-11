@@ -11,14 +11,3 @@ services:
       - "5000:5000"
     depends_on:
       - db
-
-  grid-db:
-    build: "./grid-sql"
-    ports:
-      - "5435:5432"
-  grid-api:
-    build: "./grid-api"
-    ports:
-      - "5001:5000"
-    depends_on:
-      - grid-db

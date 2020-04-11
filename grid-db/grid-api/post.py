@@ -108,7 +108,7 @@ for ex in datas:
     r = requests.post('http://localhost:5001/add', json=ex)
     if not r.ok:
         print(str(r.content))
-for ex in generate_data(10000):
+for ex in generate_data(1000000):
     r = requests.post('http://localhost:5001/add', json=ex)
     if not r.ok:
         print(str(r.content))
