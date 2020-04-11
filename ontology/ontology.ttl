@@ -14,11 +14,15 @@
 
 :Person    a   owl:Class ;
     rdfs:subClassOf :Entity ;
-    owl:disjointWith :Location .
+    owl:disjointWith :Location, :BLEDevice .
 
 :Location    a   owl:Class ;
     rdfs:subClassOf :Entity ;
-    owl:disjointWith :Person .
+    owl:disjointWith :Person, :BLEDevice .
+
+:BLEDevice  a   owl:Class ;
+    rdfs:subClassOf :Entity ;
+    owl:disjointWith :Person, :Location .
 
 :Interaction    a   owl:Class ;
     owl:disjointWith    :Entity, :Test .
@@ -34,6 +38,16 @@
 :hasTest    a   owl:ObjectProperty ;
     rdfs:domain  :Entity ;
     rdfs:range  :Test .
+
+:proxyFor   a   owl:ObjectProperty ;
+    rdfs:domain :Entity ;
+    rdfs:range  :Entity ;
+    owl:inverseOf :hasProxy .
+
+:hasProxy   a   owl:ObjectProperty
+    rdfs:domain :Entity ;
+    rdfs:range  :Entity ;
+    owl:inverseOf :proxyFor .
 
 # Test properties
 :hasTime    a   owl:DatatypeProperty ;
