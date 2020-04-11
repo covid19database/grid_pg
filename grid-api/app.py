@@ -33,6 +33,26 @@ def geocode(p):
     return olc.encode(float(p['lat']), float(p['lon']))
 
 
+def is_pfx(pfx, code):
+    """
+    Returns True if pfx is a valid pluscode prefix of 'code'
+    """
+    pfx = normalize_olc(pfx)
+    try:
+        pfx_len = pfx.index('0')
+        return code[:pfx_len] == pfx[:pfx_len]
+    except ValueError:  # substring '0' not found
+        return pfx == code
+
+
+def normalize_olc(pc):
+    if olc.isShort(pc):
+        # normalize code 849V+ -> 849V0000+
+        idx = pc.index('+')
+        return pc[:idx] + '0'*(8-idx) + '+'
+    return pc
+
+
 add_data_schema = {
     "type": "object",
     "required": ["nonce", "timestamp", "location", "attributes"],
@@ -72,8 +92,6 @@ def insert_data(datum):
     loc = datum['location']
 
     nonce = bytes.fromhex(datum['nonce'])
-
-    # TODO: check if it is in the log yet?
 
     with conn.cursor() as cur:
         strattrs = {k: str(v) for k, v in datum['attributes'].items()}
@@ -117,25 +135,25 @@ def do_query(query):
     st = st.strftime('%Y-%m-%dT%H:%M:%S')
 
     geocode = query['location']
-    if len(geocode) % 2 != 0:
-        raise Exception("Geocode must be of length 2, 4, 6 or 8")
-    if len(geocode) < 8:
-        pass
-    else:
-        geocode += "+"
+    if not olc.isValid(geocode):
+        raise Exception("Invalid pluscode")
     with conn.cursor() as cur:
         print(cur.mogrify("SELECT time, pluscode, attributes FROM grid WHERE\
                      time = half_hour(%s::timestamp) AND\
-                     pluscode = %s", (st, geocode)))
+                     is_prefix(%s, pluscode)", (st, geocode)))
         cur.execute("SELECT time, pluscode, attributes FROM grid WHERE\
                      time = half_hour(%s::timestamp) AND\
-                     pluscode = %s", (st, geocode))
-        res = cur.fetchone()
-        if res is None:
-            return {}
-        print(res)
-        attrs = res[2]
-        attrs['time'] = res[0]
+                     is_prefix(%s, pluscode)", (st, geocode))
+        attrs = {}
+        # aggregate across location
+        # TODO: aggregate across time
+        for row in cur:
+            row_attr = row[2]
+            for k, v in row_attr.items():
+                v = int(v)
+                attrs[k] = attrs.get(k, 0) + v
+        attrs['location'] = geocode
+        attrs['time'] = st
         return attrs
 
 
@@ -146,11 +164,7 @@ def add_data():
         validate(datum, schema=add_data_schema)
         if not olc.isValid(datum['location']):
             return json.jsonify({'error': 'invalid location code'})
-        if olc.isShort(datum['location']):
-            # normalize code 849V+ -> 849V0000+
-            idx = datum['location'].index('+')
-            code = datum['location'][:idx] + '0'*(8-idx) + '+'
-            datum['location'] = code
+        datum['location'] = normalize_olc(datum['location'])
         insert_data(datum)
         return json.jsonify({}), 200
     except Exception as e:
