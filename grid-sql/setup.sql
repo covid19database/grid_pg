@@ -3,9 +3,9 @@ CREATE TABLE IF NOT EXISTS grid(
     pluscode TEXT NOT NULL,
     attributes HSTORE
 );
+
 CREATE INDEX idx_grid_attrs ON grid USING GIN(attributes);
 CREATE UNIQUE INDEX IF NOT EXISTS grid_time_code_idx ON grid(time, pluscode);
-SELECT create_hypertable('grid', 'time');
 
 CREATE TABLE IF NOT EXISTS update_log(
     time TIMESTAMP NOT NULL,
@@ -13,6 +13,10 @@ CREATE TABLE IF NOT EXISTS update_log(
     nonce   BYTEA NOT NULL, -- sha256 hash
     attributes HSTORE
 );
+CREATE UNIQUE INDEX IF NOT EXISTS update_log_uniq_nonce ON update_log(nonce);
+
+SELECT create_hypertable('grid', 'time');
+SELECT create_hypertable('update_log', 'time');
 
 
 CREATE FUNCTION update_grid() 
