@@ -64,6 +64,7 @@ Note that the supported properties are **all boolean**. The server tracks the
 number of "True" responses for each property, as well as the total number of
 responses, for each placetime.
 
+**TODO:** need to generate/sign nonces in a way that preserves the properties outlined in the document above
 
 ### Querying the Grid
 
@@ -109,16 +110,16 @@ q = {
 }
 r = requests.post('http://localhost:5001/query', json=q)
 print(r.json())
-{
-    'count': 33,
-    'had_gloves': 9,
-    'had_mask': 14,
-    'infected_tested': 3,
-    'symptom_coughing': 3,
-    'symptom_sore_throat': 3,
-    'location': '849V0000+',
-    'time': '2020-04-05T11:30:00'
-}
+# {
+#     'count': 33,
+#     'had_gloves': 9,
+#     'had_mask': 14,
+#     'infected_tested': 3,
+#     'symptom_coughing': 3,
+#     'symptom_sore_throat': 3,
+#     'location': '849V0000+',
+#     'time': '2020-04-05T11:30:00'
+# }
 ```
 
 ---
