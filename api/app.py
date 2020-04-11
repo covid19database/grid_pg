@@ -2,6 +2,7 @@ from flask import Flask, json, request
 from datetime import datetime
 from jsonschema import validate
 import logging
+import time
 from shapely.geometry.point import Point
 import shapely.wkt
 from openlocationcode import openlocationcode as olc
@@ -9,8 +10,16 @@ import psycopg2
 logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__, static_url_path='')
-conn = psycopg2.connect("dbname=covid19 user=covid19 port=5432\
-                         password=covid19databasepassword host=db")
+while True:
+    try:
+        conn = psycopg2.connect("dbname=covid19 user=covid19 port=5432\
+                                 password=covid19databasepassword \
+                                 host=db")
+        break
+    except psycopg2.OperationalError:
+        logging.info("Could not connect to DB; retrying...")
+        time.sleep(1)
+        continue
 
 
 add_data_schema = {
