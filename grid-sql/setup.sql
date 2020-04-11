@@ -16,7 +16,35 @@ CREATE TABLE IF NOT EXISTS update_log(
 CREATE UNIQUE INDEX IF NOT EXISTS update_log_uniq_nonce ON update_log(nonce);
 
 SELECT create_hypertable('grid', 'time');
-SELECT create_hypertable('update_log', 'time');
+
+
+CREATE OR REPLACE FUNCTION plus_code(poly TEXT) RETURNS TEXT AS $$
+import sys
+import re
+sys.path.append('/var/lib/postgresql/.local/lib/python3.7/site-packages')
+from openlocationcode import openlocationcode as olc
+x, y = re.findall(r'(-?[0-9]+.?[0-9]*)',poly)
+x = float(x)
+y = float(y)
+return olc.encode(y, x)
+$$ LANGUAGE plpython3u;
+
+CREATE OR REPLACE FUNCTION is_prefix(pfx TEXT, pluscode TEXT) RETURNS BOOLEAN AS $$
+import sys
+sys.path.append('/var/lib/postgresql/.local/lib/python3.7/site-packages')
+from openlocationcode import openlocationcode as olc
+try:
+    pfx_len = pfx.index('0')
+    return pluscode[:pfx_len] == pfx[:pfx_len]
+except ValueError:  # substring '0' not found
+    return pfx == pluscode
+$$ LANGUAGE plpython3u;
+
+CREATE OR REPLACE FUNCTION half_hour(ts TIMESTAMP) RETURNS TIMESTAMP AS $$
+from datetime import datetime, timedelta
+tss = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
+return tss - (tss - datetime.min) % timedelta(minutes=30)
+$$ LANGUAGE plpython3u;
 
 
 CREATE FUNCTION update_grid() 
@@ -60,31 +88,32 @@ num += 1
 return num
 $$ LANGUAGE plpython3u;
 
-CREATE FUNCTION update_grid_from_log() RETURNS trigger AS $$
-row = TD["row"]
-stmt = plpy.prepare("INSERT INTO grid(time, pluscode) VALUES\
-                    ($1, $2, $3)", ["timestamp", "varchar"])
-plpy.execute(stmt, [row["time"], row["pluscode"]])
-return "OK"
-return
+-- CREATE FUNCTION update_grid_from_log() RETURNS trigger AS $$
+-- row = TD["row"]
+-- stmt = plpy.prepare("INSERT INTO grid(time, pluscode) VALUES\
+--                     ($1, $2, $3)", ["timestamp", "varchar"])
+-- plpy.execute(stmt, [row["time"], row["pluscode"]])
+-- return "OK"
+-- return
 
-stmt = plpy.prepare("SELECT attributes FROM grid\
-                    WHERE grid.time = half_hour($1) AND\
-                    grid.pluscode = $2", ["varchar", "varchar"])
-res = plpy.execute(stmt, [row["time"], row["pluscode"]])
-if len(res) == 0:
-    grid_attrs = {
-        "feels_sick": row["attributes"].get("feels_sick", False)
-    }
-    stmt = plpy.prepare("INSERT INTO grid(time, pluscode, attributes) VALUES\
-                        ($1, $2, $3, $4)", ["timestamp", "varchar", "varchar", "hstore"])
-    plpy.execute(stmt, [row["time"], row["pluscode"], grid_attrs])
-else:
-    rec = next(res)
-return
-$$ LANGUAGE plpython3u;
+-- stmt = plpy.prepare("SELECT attributes FROM grid\
+--                     WHERE grid.time = half_hour($1) AND\
+--                     grid.pluscode = $2", ["varchar", "varchar"])
+-- res = plpy.execute(stmt, [row["time"], row["pluscode"]])
+-- if len(res) == 0:
+--     grid_attrs = {
+--         "feels_sick": row["attributes"].get("feels_sick", False)
+--     }
+--     stmt = plpy.prepare("INSERT INTO grid(time, pluscode, attributes) VALUES\
+--                         ($1, $2, $3, $4)", ["timestamp", "varchar", "varchar", "hstore"])
+--     plpy.execute(stmt, [row["time"], row["pluscode"], grid_attrs])
+-- else:
+--     rec = next(res)
+-- return
+-- $$ LANGUAGE plpython3u;
 
-CREATE TRIGGER check_update
-    BEFORE UPDATE ON update_log
-    FOR EACH ROW
-    EXECUTE FUNCTION update_grid_from_log();
+-- CREATE TRIGGER check_update
+--     BEFORE UPDATE ON update_log
+--     FOR EACH ROW
+--     EXECUTE FUNCTION update_grid_from_log();
+-- 
