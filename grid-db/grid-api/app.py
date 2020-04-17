@@ -94,7 +94,7 @@ def insert_data(datum):
 
     with conn.cursor() as cur:
         for counter, value in datum['attributes'].items():
-            cur.execute("INSERT INTO attributes(grid_time, grid_loc,\
+            cur.execute("INSERT INTO attributes(time, location,\
                         attribute, counter) VALUES (%s, %s, %s, %s)",
                         (ts, loc, counter, value))
     conn.commit()

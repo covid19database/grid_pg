@@ -1,14 +1,14 @@
 CREATE TABLE IF NOT EXISTS attributes(
-    grid_time   TIMESTAMP NOT NULL,
-    grid_loc    TEXT      NOT NULL,
+    time   TIMESTAMP NOT NULL,
+    location    TEXT      NOT NULL,
     attribute   TEXT      NOT NULL,
     counter     INTEGER   NOT NULL,
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE OR REPLACE VIEW grid AS
-    SELECT grid_time as time,
-           grid_loc as location,
+    SELECT time,
+           location,
            attribute,
            sum(counter) as count
     FROM attributes
@@ -42,3 +42,7 @@ from datetime import datetime, timedelta
 tss = datetime.strptime(ts, '%Y-%m-%d %H:%M:%S')
 return tss - (tss - datetime.min) % timedelta(minutes=30)
 $$ LANGUAGE plpython3u;
+
+SELECT create_hypertable('attributes', 'time');
+CREATE INDEX ON attributes (location, time DESC);
+CREATE INDEX ON attributes (location text_pattern_ops);

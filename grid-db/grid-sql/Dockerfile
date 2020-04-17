@@ -33,11 +33,11 @@ RUN /etc/init.d/postgresql start &&\
     psql --command "CREATE USER covid19 WITH SUPERUSER PASSWORD 'covid19databasepassword';" &&\
     createdb -O covid19 covid19 &&\
     psql -d covid19 --command "CREATE EXTENSION postgis;" &&\
-    # psql -d covid19 --command "CREATE EXTENSION hstore;" &&\
     psql -d covid19 --command "CREATE EXTENSION plpython3u;" &&\
-    # psql -d covid19 --command "CREATE EXTENSION hstore_plpython3u;" &&\
-    # psql -d covid19 --command "CREATE EXTENSION timescaledb CASCADE;" &&\
+    psql -d covid19 --command "CREATE EXTENSION timescaledb CASCADE;" &&\
     psql -d covid19 --command "\i opt/setup.sql"
+    # psql -d covid19 --command "CREATE EXTENSION hstore;" &&\
+    # psql -d covid19 --command "CREATE EXTENSION hstore_plpython3u;" &&\
 RUN pg_lsclusters
 
 # Expose the PostgreSQL port
