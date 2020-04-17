@@ -83,7 +83,11 @@ get_schema = {
 
 def insert_data(datum):
     # parse/validate timestamp
-    # ts = datetime.strptime(datum['timestamp'], '%Y-%m-%dT%H:%M:%S')
+    ts = datetime.strptime(datum['timestamp'], '%Y-%m-%dT%H:%M:%S')
+    if ts > datetime.utcnow():
+        raise ValueError(f"Timestamp {datum['timestamp']} \
+cannot be in the future")
+
     # ts = ts.strftime('%Y-%m-%dT%H:%M:%S')
     logging.info(">", datum)
     ts = half_hour(datum['timestamp'])
@@ -111,8 +115,9 @@ def geocode_to_prefix(gc):
 
 
 def do_query(query):
-    st = datetime.strptime(query['timestamp'], '%Y-%m-%dT%H:%M:%S')
-    st = st.strftime('%Y-%m-%dT%H:%M:%S')
+    # st = datetime.strptime(query['timestamp'], '%Y-%m-%dT%H:%M:%S')
+    # st = st.strftime('%Y-%m-%dT%H:%M:%S')
+    st = half_hour(query['timestamp'])
 
     geocode = query['location']
     if not olc.isValid(geocode):
@@ -121,7 +126,7 @@ def do_query(query):
     with conn.cursor() as cur:
         cur.execute("SELECT time, attribute, sum(count)\
                     FROM grid\
-                    WHERE time = half_hour(%s::timestamp)\
+                    WHERE time = %s\
                         AND location like %s\
                     GROUP BY time, attribute;", (st, geocode))
         # aggregate across location

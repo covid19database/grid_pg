@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS attributes(
     created_at  TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
-CREATE OR REPLACE VIEW grid AS
+CREATE MATERIALIZED VIEW grid AS
     SELECT time,
            location,
            attribute,
@@ -44,5 +44,5 @@ return tss - (tss - datetime.min) % timedelta(minutes=30)
 $$ LANGUAGE plpython3u;
 
 SELECT create_hypertable('attributes', 'time');
-CREATE INDEX ON attributes (location, time DESC);
-CREATE INDEX ON attributes (location text_pattern_ops);
+CREATE INDEX ON grid (location, time DESC);
+CREATE INDEX ON grid (location text_pattern_ops);

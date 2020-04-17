@@ -8,4 +8,4 @@ RUN pip install -r /opt/requirements.txt
 
 ADD app.py /opt/app.py
 
-CMD ["flask", "run"]
+CMD ["flask", "run", "--with-threads"]
