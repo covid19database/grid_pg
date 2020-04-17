@@ -16,7 +16,7 @@ while True:
         conn = psycopg2.connect("dbname=covid19 user=covid19 port=5432\
                                  password=covid19databasepassword \
                                  host=grid-db")
-        psycopg2.extras.register_hstore(conn)
+        # psycopg2.extras.register_hstore(conn)
         break
     except psycopg2.OperationalError:
         logging.info("Could not connect to DB; retrying...")
@@ -53,28 +53,25 @@ def normalize_olc(pc):
     return pc
 
 
-add_data_schema = {
+put_inc_schema = {
     "type": "object",
-    "required": ["nonce", "timestamp", "location", "attributes"],
+    "required": ["timestamp", "location", "attributes"],
     "properties": {
-        "nonce": {"type": "string"},  # hex-encoded SHA256
         "timestamp": {"type": "string", "format": "date-time"},  # UTC
         "location": {"type": "string"},  # plus-code
         "attributes": {
             "additionalProperties": False,
             "type": "object",
             "properties": {
-                "symptom_coughing": {"type": "boolean"},
-                "symptom_sore_throat": {"type": "boolean"},
-                "infected_tested": {"type": "boolean"},
-                "had_mask": {"type": "boolean"},
-                "had_gloves": {"type": "boolean"},
+                "confirmed": {"type": "integer"},
+                "symptomatic": {"type": "integer"},
+                "diagnosed": {"type": "integer"}
             },
         }
     }
 }
 
-query_grid_schema = {
+get_schema = {
     "type": "object",
     "required": ["timestamp", "location"],
     "properties": {
@@ -88,46 +85,29 @@ def insert_data(datum):
     # parse/validate timestamp
     # ts = datetime.strptime(datum['timestamp'], '%Y-%m-%dT%H:%M:%S')
     # ts = ts.strftime('%Y-%m-%dT%H:%M:%S')
+    logging.info(">", datum)
     ts = half_hour(datum['timestamp'])
     loc = datum['location']
 
-    nonce = bytes.fromhex(datum['nonce'])
+    # TODO: validate nonce
+    # nonce = bytes.fromhex(datum['nonce'])
 
     with conn.cursor() as cur:
-        strattrs = {k: str(v) for k, v in datum['attributes'].items()}
-        cur.execute("INSERT INTO update_log(time, pluscode, nonce, attributes)\
-                     VALUES (%s, %s, %s, %s)", (ts, loc, nonce, strattrs))
+        for counter, value in datum['attributes'].items():
+            cur.execute("INSERT INTO attributes(grid_time, grid_loc,\
+                        attribute, counter) VALUES (%s, %s, %s, %s)",
+                        (ts, loc, counter, value))
     conn.commit()
 
-    attrs = {k: 1 if v else 0 for k, v in datum['attributes'].items()}
 
-    # merge into the grid
-    with conn.cursor() as cur:
-        cur.execute("SELECT attributes FROM grid \
-                     WHERE \
-                        time = %s \
-                        AND pluscode = %s", (ts, datum['location']))
-        grid = cur.fetchone()
-        if grid is None:
-            # create new grid square
-            q = "INSERT INTO grid(time, pluscode, attributes)\
-                 VALUES (%s, %s, %s)"
-            for k, v in attrs.items():
-                attrs[k] = str(v)
-            attrs['count'] = str(1)
-            cur.execute(q, (ts, datum['location'], attrs))
-        else:
-            # update existing grid
-            grid = grid[0]
-            count = int(grid['count'])
-            grid['count'] = str(count + 1)
-            for k, v in attrs.items():
-                newv = int(grid.get(k, '0')) + v
-                grid[k] = str(newv)
-            q = "UPDATE grid SET attributes = %s \
-                 WHERE time = %s AND pluscode = %s"
-            cur.execute(q, (grid, ts, datum['location']))
-    conn.commit()
+def geocode_to_prefix(gc):
+    if '0' in gc:
+        idx = gc.index('0')
+        return gc[:idx]+'%'
+    elif '+' in gc:
+        idx = gc.index('+')
+        return gc[:idx]+'%'
+    return gc + '%'
 
 
 def do_query(query):
@@ -137,48 +117,47 @@ def do_query(query):
     geocode = query['location']
     if not olc.isValid(geocode):
         raise Exception("Invalid pluscode")
+    geocode = geocode_to_prefix(geocode)
     with conn.cursor() as cur:
-        print(cur.mogrify("SELECT time, pluscode, attributes FROM grid WHERE\
-                     time = half_hour(%s::timestamp) AND\
-                     is_prefix(%s, pluscode)", (st, geocode)))
-        cur.execute("SELECT time, pluscode, attributes FROM grid WHERE\
-                     time = half_hour(%s::timestamp) AND\
-                     is_prefix(%s, pluscode)", (st, geocode))
-        attrs = {}
+        cur.execute("SELECT time, attribute, sum(count)\
+                    FROM grid\
+                    WHERE time = half_hour(%s::timestamp)\
+                        AND location like %s\
+                    GROUP BY time, attribute;", (st, geocode))
         # aggregate across location
-        # TODO: aggregate across time
+        attrs = {}
         for row in cur:
-            row_attr = row[2]
-            for k, v in row_attr.items():
-                v = int(v)
-                attrs[k] = attrs.get(k, 0) + v
-        attrs['location'] = geocode
+            attrs[row[1]] = int(row[2])
+        attrs['location'] = query['location']
         attrs['time'] = st
         return attrs
 
 
-@app.route('/add', methods=['POST'])
+@app.route('/put-inc', methods=['POST'])
 def add_data():
     try:
         datum = request.get_json(force=True)
-        validate(datum, schema=add_data_schema)
+        validate(datum, schema=put_inc_schema)
         if not olc.isValid(datum['location']):
-            return json.jsonify({'error': 'invalid location code'})
+            return json.jsonify({'error': 'invalid location code'}), 500
         datum['location'] = normalize_olc(datum['location'])
+        logging.info(f"datum {datum}")
         insert_data(datum)
         return json.jsonify({}), 200
     except Exception as e:
         return json.jsonify({'error': str(e)}), 500
 
 
-@app.route('/query', methods=['POST'])
+@app.route('/get', methods=['POST'])
 def query_grid():
     try:
         query = request.get_json(force=True)
-        validate(query, schema=query_grid_schema)
-        return json.jsonify(do_query(query)), 200
+        validate(query, schema=get_schema)
+        res = do_query(query)
+        logging.info(res)
+        return json.jsonify(res), 200
     except Exception as e:
-        return json.jsonify({'error': e}), 500
+        return json.jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':

@@ -25,17 +25,18 @@ RUN timescaledb-tune --quiet --yes
 RUN echo "host all  all    0.0.0.0/0  password" >> /etc/postgresql/11/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf
 
-ADD setup.sql /opt/setup.sql
+# ADD setup.sql /opt/setup.sql
+ADD setup2.sql /opt/setup.sql
 
 USER postgres
 RUN /etc/init.d/postgresql start &&\
     psql --command "CREATE USER covid19 WITH SUPERUSER PASSWORD 'covid19databasepassword';" &&\
     createdb -O covid19 covid19 &&\
     psql -d covid19 --command "CREATE EXTENSION postgis;" &&\
-    psql -d covid19 --command "CREATE EXTENSION hstore;" &&\
+    # psql -d covid19 --command "CREATE EXTENSION hstore;" &&\
     psql -d covid19 --command "CREATE EXTENSION plpython3u;" &&\
-    psql -d covid19 --command "CREATE EXTENSION hstore_plpython3u;" &&\
-    psql -d covid19 --command "CREATE EXTENSION timescaledb CASCADE;" &&\
+    # psql -d covid19 --command "CREATE EXTENSION hstore_plpython3u;" &&\
+    # psql -d covid19 --command "CREATE EXTENSION timescaledb CASCADE;" &&\
     psql -d covid19 --command "\i opt/setup.sql"
 RUN pg_lsclusters
 

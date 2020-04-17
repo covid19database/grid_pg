@@ -87,33 +87,3 @@ plpy.execute(stmt, [key[0], key[1], attrs])
 num += 1
 return num
 $$ LANGUAGE plpython3u;
-
--- CREATE FUNCTION update_grid_from_log() RETURNS trigger AS $$
--- row = TD["row"]
--- stmt = plpy.prepare("INSERT INTO grid(time, pluscode) VALUES\
---                     ($1, $2, $3)", ["timestamp", "varchar"])
--- plpy.execute(stmt, [row["time"], row["pluscode"]])
--- return "OK"
--- return
-
--- stmt = plpy.prepare("SELECT attributes FROM grid\
---                     WHERE grid.time = half_hour($1) AND\
---                     grid.pluscode = $2", ["varchar", "varchar"])
--- res = plpy.execute(stmt, [row["time"], row["pluscode"]])
--- if len(res) == 0:
---     grid_attrs = {
---         "feels_sick": row["attributes"].get("feels_sick", False)
---     }
---     stmt = plpy.prepare("INSERT INTO grid(time, pluscode, attributes) VALUES\
---                         ($1, $2, $3, $4)", ["timestamp", "varchar", "varchar", "hstore"])
---     plpy.execute(stmt, [row["time"], row["pluscode"], grid_attrs])
--- else:
---     rec = next(res)
--- return
--- $$ LANGUAGE plpython3u;
-
--- CREATE TRIGGER check_update
---     BEFORE UPDATE ON update_log
---     FOR EACH ROW
---     EXECUTE FUNCTION update_grid_from_log();
--- 

@@ -41,10 +41,29 @@ def random_date(year, month_range):
     return ts.strftime('%Y-%m-%dT%H:%M:%S')
 
 
+def random_pluscode():
+    pfx = '849V'
+    valid_chars = ['2', '3', '4', '5', '6', '7', '8', '9', 'C', 'F', 'G',
+                   'H', 'J', 'M', 'P', 'Q', 'R', 'V', 'W', 'X']
+    first_part = ''.join([random.choice(valid_chars) for i in range(4)])
+    last_part = ''.join([random.choice(valid_chars) for i in range(2)])
+    return f"{pfx}{first_part}+{last_part}"
+
+
 def nonce():
     h = hashlib.sha256()
     h.update(os.urandom(32))
     return h.hexdigest()
+
+
+def random_attribute():
+    n = random.random()
+    if n < 0.5:
+        return {'symptomatic': random.randint(0, 10)}
+    elif n < 0.8:
+        return {'diagnosed': random.randint(0, 10)}
+    else:
+        return {'confirmed': random.randint(0, 10)}
 
 
 def generate_data(n):
@@ -54,61 +73,12 @@ def generate_data(n):
         yield {
             "nonce": nonce(),
             "timestamp": random_date(2020, [4]),
-            "location": random.choice(oakland_pluscodes),
-            "attributes": {
-                "symptom_coughing": random.random() < 0.2,
-                "symptom_sore_throat": random.random() < 0.1,
-                "infected_tested": random.random() < 0.05,
-                "had_mask": random.random() < 0.50,
-                "had_gloves": random.random() < 0.30
-            }
+            "location": random_pluscode(),
+            "attributes": random_attribute()
         }
 
 
-datas = [
-    {
-        "nonce": nonce(),
-        "timestamp": "2020-04-04T12:17:00",
-        "location": "849VRPCP+",
-        "attributes": {
-            "had_mask": True,
-            "symptom_coughing": False
-        },
-    },
-    {
-        "nonce": nonce(),
-        "timestamp": "2020-04-04T12:01:00",
-        "location": "849VRPCP+",
-        "attributes": {
-            "had_mask": True,
-            "symptom_coughing": True
-        },
-    },
-    {
-        "nonce": nonce(),
-        "timestamp": "2020-04-04T13:42:00",
-        "location": "849VRPCH+",
-        "attributes": {
-            "had_mask": False,
-            "infected_tested": True
-        },
-    },
-    {
-        "nonce": nonce(),
-        "timestamp": "2020-04-05T11:30:00",
-        "location": "849VRPCH+",
-        "attributes": {
-            "had_mask": False,
-            "had_gloves": True
-        },
-    }
-]
-
-for ex in datas:
-    r = requests.post('http://localhost:5001/add', json=ex)
-    if not r.ok:
-        print(str(r.content))
 for ex in generate_data(1000000):
-    r = requests.post('http://localhost:5001/add', json=ex)
+    r = requests.post('http://localhost:5001/put-inc', json=ex)
     if not r.ok:
         print(str(r.content))

@@ -33,45 +33,38 @@ Requires:
 
 ## API Documentation
 
-### Posting data
+### Adding data with `PUT-INC`
 
-User data posted to the API must adhere to the following JSON schema definition:
+`PUT-INC` pushes named counters at a place-time to the backend where they are added to existing counters. The content of a `PUT-INC` may come from a user self-reporting data or from an aggregate data source
+
+Data posted to the API must adhere to the following JSON schema definition:
 
 ```python
-add_data_schema = {
+put_inc_schema = {
     "type": "object",
-    "required": ["nonce", "timestamp", "location", "attributes"],
+    "required": ["timestamp", "location", "attributes"],
     "properties": {
-        "nonce": {"type": "string"},  # hex-encoded SHA256
         "timestamp": {"type": "string", "format": "date-time"},  # UTC
         "location": {"type": "string"},  # plus-code
         "attributes": {
             "additionalProperties": False,
             "type": "object",
             "properties": {
-                "symptom_coughing": {"type": "boolean"},
-                "symptom_sore_throat": {"type": "boolean"},
-                "infected_tested": {"type": "boolean"},
-                "had_mask": {"type": "boolean"},
-                "had_gloves": {"type": "boolean"},
+                "confirmed": {"type": "integer"},
+                "symptomatic": {"type": "integer"},
+                "diagnosed": {"type": "integer"}
             },
         }
     }
 }
 ```
 
-Note that the supported properties are **all boolean**. The server tracks the
-number of "True" responses for each property, as well as the total number of
-responses, for each placetime.
-
-**TODO:** need to generate/sign nonces in a way that preserves the properties outlined in the document above
-
-### Querying the Grid
+### Querying the Grid with `GET`
 
 All queries adhere to the following JSON schema definition
 
 ```python
-query_grid_schema = {
+get_schema = {
     "type": "object",
     "required": ["timestamp", "location"],
     "properties": {
@@ -87,38 +80,29 @@ The queries may be at different levels of spatial granularity (temporal granular
 
 ```python
 q = {
-    "timestamp": "2020-04-05T11:30:00",
-    "location": "849VVP2J+"
+    "timestamp": "2020-04-01T00:30:00",
+    "location": "849VM5FP+"
 }
-r = requests.post('http://localhost:5001/query', json=q)
+r = requests.post('http://localhost:5001/get', json=q)
 print(r.json())
 # {
-#     'count': 2,
-#     'had_gloves': 0,
-#     'had_mask': 2,
-#     'infected_tested': 0,
-#     'symptom_coughing': 1,
-#     'symptom_sore_throat': 0,
-#     'location': '849VVP2J+',
-#     'time': '2020-04-05T11:30:00'
+#     'location': '849VM5FP+',
+#     'symptomatic': 2,
+#     'time': '2020-04-01T00:30:00'
 # }
 
 
 q = {
-    "timestamp": "2020-04-05T11:30:00",
+    "timestamp": "2020-04-01T00:30:00",
     "location": "849V0000+"
 }
-r = requests.post('http://localhost:5001/query', json=q)
+r = requests.post('http://localhost:5001/get', json=q)
 print(r.json())
 # {
-#     'count': 33,
-#     'had_gloves': 9,
-#     'had_mask': 14,
-#     'infected_tested': 3,
-#     'symptom_coughing': 3,
-#     'symptom_sore_throat': 3,
+#     'diagnosed': 1,
+#     'symptomatic': 12,
 #     'location': '849V0000+',
-#     'time': '2020-04-05T11:30:00'
+#     'time': '2020-04-01T00:30:00'
 # }
 ```
 
