@@ -78,6 +78,12 @@ The queries may be at different levels of spatial granularity (temporal granular
 
 ---
 
+### `put-inc` example and testing data
+
+To generate testing data and see an example of `put-inc`, run `python grid-api/post.py`
+
+### `get` Examples
+
 ```python
 q = {
     "timestamp": "2020-04-01T00:30:00",
