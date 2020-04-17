@@ -26,7 +26,7 @@ RUN echo "host all  all    0.0.0.0/0  password" >> /etc/postgresql/11/main/pg_hb
 RUN echo "listen_addresses='*'" >> /etc/postgresql/11/main/postgresql.conf
 
 # ADD setup.sql /opt/setup.sql
-ADD setup2.sql /opt/setup.sql
+ADD setup.sql /opt/setup.sql
 
 USER postgres
 RUN /etc/init.d/postgresql start &&\
